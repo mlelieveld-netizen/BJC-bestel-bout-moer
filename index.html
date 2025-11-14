@@ -1,0 +1,3179 @@
+<!doctype html>
+<html lang="nl" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Bouten-moeren BJC</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --muted: #a0a8b8;
+      --text: #e7ebf3;
+      --accent: #7aa2f7;
+      --ok: #8bd5ca;
+      --warn: #f5a97f;
+      --danger: #ed8796;
+      --border: #2a2f3a;
+    }
+    html, body {
+      margin:0; padding:0; background:var(--bg); color:var(--text); font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+    .wrap { max-width: 1100px; margin: 24px auto 56px; padding: 0 16px; }
+    .header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .logo { display:flex; align-items:center; justify-content:center; gap:6px; }
+    .logo img { width:44px; height:44px; object-fit:contain; border-radius:10px; }
+    h1 { font-size: 20px; margin:0; letter-spacing:.4px; }
+    .sub { color:var(--muted); font-size:12px; margin-top:2px; }
+    .bar { display:flex; gap:12px; align-items:center; }
+    .search { flex:1; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:center; }
+    .search input { flex:1; background:transparent; border:none; color:var(--text); outline:none; font-size:14px; }
+    .pill { font-size:12px; padding:8px 10px; border:1px dashed var(--border); color:var(--muted); border-radius:10px; }
+    .hidden { display:none!important; }
+    .grid { display:grid; grid-template-columns: 1.3fr 1fr; gap:16px; margin-top:12px; }
+    .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px; }
+    .panel h2 { margin:0 0 8px; font-size:14px; color:var(--muted); font-weight:600; }
+    .results { max-height: 62vh; overflow:auto; border-radius:10px; }
+    .row { display:grid; grid-template-columns: 110px 1fr 90px 120px 90px; gap:10px; padding:10px; border-bottom:1px solid var(--border); align-items:center; }
+    .row:hover { background:#1d2230; }
+    .head { position:sticky; top:0; background:#151923; z-index:1; border-bottom:1px solid var(--border); }
+    .muted { color:var(--muted); }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .btn { border:1px solid var(--border); background:#1c2130; color:var(--text); padding:7px 9px; border-radius:10px; cursor:pointer; }
+    .btn:disabled { opacity:.4; cursor:not-allowed; }
+    .btn-primary { background:linear-gradient(180deg, #2a3b66, #1c2a4e); color:#eaf2ff; border-color:#2d3b57; }
+    .qty { width:70px; background:#0f1320; border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 8px; }
+    .tfoot { display:flex; justify-content:space-between; align-items:center; padding-top:8px; gap:10px; flex-wrap:wrap; }
+    .badgelite { font-size:11px; padding:6px 8px; color:var(--muted); border:1px solid var(--border); border-radius:10px; }
+    .copy { background:#112233; }
+    .danger { color:var(--danger); }
+    .ok { color:var(--ok); }
+    a { color: var(--accent); text-decoration: none; }
+  
+@media (max-width: 768px) {
+  .wrap { margin: 16px auto 48px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .bar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .grid { grid-template-columns: 1fr; }
+  .panel { padding: 14px 12px; }
+  .results { max-height: none; }
+  .row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 10px; padding: 8px 10px; }
+  .row.head { display: none; }
+  #results .row.item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "art price"
+      "desc price"
+      "unit controls";
+    align-items: center;
+    gap: 4px 12px;
+  }
+  #results .row.item > div:nth-child(1) { grid-area: art; }
+  #results .row.item > div:nth-child(2) { grid-area: desc; }
+  #results .row.item > div:nth-child(3) { grid-area: price; justify-self: end; }
+  #results .row.item > div:nth-child(4) { grid-area: unit; font-size: 11px; color: var(--muted); }
+  #results .row.item > div:nth-child(5) { grid-area: controls; display: flex; gap: 6px; justify-self: end; }
+  #cart .row.item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "art qty"
+      "desc action"
+      "price action";
+    align-items: center;
+    gap: 4px 12px;
+  }
+  #cart .row.item > div:nth-child(1) { grid-area: art; }
+  #cart .row.item > div:nth-child(2) { grid-area: desc; }
+  #cart .row.item > div:nth-child(3) { grid-area: qty; font-weight:600; justify-self: end; }
+  #cart .row.item > div:nth-child(4) { grid-area: price; font-size: 12px; color: var(--muted); }
+  #cart .row.item > div:nth-child(5) { grid-area: action; justify-self: end; }
+  .qty { width: 90px; }
+  .tfoot { flex-direction: column; align-items: stretch; }
+  .tfoot > span { align-self: flex-start; }
+}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="logo">
+        <img src="BJC.png" alt="BJC Logo" />
+        <img src="Oet logo.jpg" alt="Oet Logo" />
+      </div>
+      <div>
+        <h1>Bouten-moeren BJC</h1>
+        <div class="sub">Laatste build: 2025-11-14 10:25 — dataset: 306 fasteners</div>
+      </div>
+    </div>
+
+    <div class="bar">
+      <div class="search">
+        <span class="muted">🔎</span>
+        <input id="q" type="text" placeholder="Zoek op omschrijving of artikelnummer… (min. 2 tekens)"/>
+      </div>
+      <button id="clearTop" class="btn" disabled>Wissen</button>
+      <div class="pill">Resultaten verschijnen zodra je begint te typen</div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Zoekresultaten</h2>
+        <div id="results" class="results">
+          <div class="row head muted">
+            <div class="code">Art.nr</div>
+            <div>Omschrijving</div>
+            <div class="code">Netto/VE</div>
+            <div>VE</div>
+            <div>Actie</div>
+          </div>
+          <div id="empty" class="muted" style="padding:12px;">Typ minimaal 2 tekens om resultaten te zien.</div>
+        </div>
+        <div class="tfoot">
+          <span id="count" class="badgelite">0 resultaten</span>
+          <button id="clear" class="btn" disabled>Wissen</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Bestellijst</h2>
+        <div id="cart" class="results">
+          <div class="row head muted">
+            <div class="code">Art.nr</div>
+            <div>Omschrijving</div>
+            <div class="code">Aantal</div>
+            <div class="code">Netto</div>
+            <div>Actie</div>
+          </div>
+          <div id="cartEmpty" class="muted" style="padding:12px;">Nog geen items toegevoegd.</div>
+        </div>
+        <div class="tfoot">
+          <span id="cartCount" class="badgelite">0 items</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button id="emailMike" class="btn btn-primary" disabled>Mail naar werkplaats</button>
+            <button id="downloadTxt" class="btn btn-primary" disabled>Download .txt bestand</button>
+            <button id="copy" class="btn copy" disabled>Kopieer voor WhatsApp</button>
+            <button id="reset" class="btn danger" disabled>Leeg lijst</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="DATA" type="application/json">[
+  {
+    "Artikelnummer": "5000036379",
+    "Artikelomschrijving": "Sluitring DIN125A RVS A2 M8  100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036354",
+    "Artikelomschrijving": "Sluitring DIN125A RVS A2 M10 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036355",
+    "Artikelomschrijving": "Sluitring DIN125A  RVS A2 M12 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036357",
+    "Artikelomschrijving": "Sluitring DIN125A RVS A2 M16 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029600",
+    "Artikelomschrijving": "Dopmoer DIN1587 RVS A2 M8 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029583",
+    "Artikelomschrijving": "Dopmoer DIN1587 RVS A2 M10 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029585",
+    "Artikelomschrijving": "Dopmoer DIN1587 RVS A2 M12 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028846",
+    "Artikelomschrijving": "Bolcilinderspaanplaatschr.RVS 5,0x60 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028847",
+    "Artikelomschrijving": "Bolcilinderspaanplaatschr.RVS 5,0x70 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000030107",
+    "Artikelomschrijving": "Houtdraadbout DIN571 RVS A2  8 x50  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000030113",
+    "Artikelomschrijving": "Houtdraadbout DIN571 RVS A2  8 x80  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029999",
+    "Artikelomschrijving": "Houtdraadbout DIN571 RVS A2 10 x60  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000030002",
+    "Artikelomschrijving": "Houtdraadbout DIN571 RVS A2 10 x80  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029981",
+    "Artikelomschrijving": "Houtdraadbout DIN571 RVS A2  10x100 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029983",
+    "Artikelomschrijving": "Houtdraadbout DIN571 RVS A2  10x120 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000034980",
+    "Artikelomschrijving": "Oogbout DIN580 A2 M10   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035017",
+    "Artikelomschrijving": "Oogmoer DIN582 A2 M10   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036334",
+    "Artikelomschrijving": "Slotbout DIN603 RVS A2 M8 x45  100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036335",
+    "Artikelomschrijving": "Slotbout DIN603 RVS A2 M8 x50  100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036213",
+    "Artikelomschrijving": "Slotbout DIN603 RVS A2 M10x60  100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036215",
+    "Artikelomschrijving": "Slotbout DIN603 RVS A2 M10x70  100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036190",
+    "Artikelomschrijving": "Slotbout DIN603 RVS A2 M10x100 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036191",
+    "Artikelomschrijving": "Slotbout DIN603 RVS A2 M10x110 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038535",
+    "Artikelomschrijving": "Koppelmoer DIN6334 RVS A2 M12 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033799",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 A2 M6 x20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033824",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 A2 M8 x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033826",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 A2 M8 x40 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028587",
+    "Artikelomschrijving": "Zelfborschr. cil. Ph DIN7504N A2 4,2x16",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028589",
+    "Artikelomschrijving": "Zelfborschr. cil. Pz DIN7504N A2 4,2x25",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028594",
+    "Artikelomschrijving": "Zelfborschr. cil. Ph DIN7504N A2 4,8x19",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028599",
+    "Artikelomschrijving": "Zelfborschr. cil. Ph DIN7504N A2 4,8x50",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028617",
+    "Artikelomschrijving": "Zelfborschr. vz.kruis DIN7504P A2 4,8x19",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000028619",
+    "Artikelomschrijving": "Zelfborschr. vz.kruis DIN7504P A2 4,8x32",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033240",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 A2 M5 x10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033295",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 A2 M8 x20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033297",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 A2 M8 x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033135",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 A2 M10x20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033137",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 A2 M10x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029478",
+    "Artikelomschrijving": "Carr.ring DIN9021 RVS A2  M8   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029466",
+    "Artikelomschrijving": "Carr.ring DIN9021 RVS A2  M12  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041681",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M5x80 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041717",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M8 x20 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041719",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M8 x25 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041722",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M8 x40 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041467",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x20 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041470",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x30 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041472",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x40 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041478",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x70 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041479",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x75 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041480",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x80 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041457",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M10x100 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041502",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M12x70 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000041533",
+    "Artikelomschrijving": "Tapbout DIN933 RVS A2 M16x30 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039987",
+    "Artikelomschrijving": "Moer zeskant  DIN934 RVS A2 M10 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039988",
+    "Artikelomschrijving": "Moer zeskant  DIN934 RVS A2 M12 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039990",
+    "Artikelomschrijving": "Moer zeskant  DIN934 RVS A2 M16 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029739",
+    "Artikelomschrijving": "Draadeind DIN975 RVS A2 M10 x 1mtr",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038568",
+    "Artikelomschrijving": "Borgmoer DIN985 RVS A2 M10 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000017513",
+    "Artikelomschrijving": "Deuropvangbeugel compleet 275x250x220",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000019353",
+    "Artikelomschrijving": "Stokeind+zesk. sl. vl. torx M8 120 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049612",
+    "Artikelomschrijving": "Betonschroef CLS  6.0x  60  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049606",
+    "Artikelomschrijving": "Betonschroef CLS 10.0x  80 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049638",
+    "Artikelomschrijving": "Doorsteekanker NWS-CE 10x  90 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049644",
+    "Artikelomschrijving": "Doorsteekanker NWS-CE 12x  90 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049639",
+    "Artikelomschrijving": "Doorsteekanker NWS-CE 12x110 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049626",
+    "Artikelomschrijving": "Doorsteekanker NWS-CEX 12x 90 RVS A4 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049623",
+    "Artikelomschrijving": "Doorsteekanker NWS-CEX 12x110 RVS A4 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049673",
+    "Artikelomschrijving": "Bossong injectiemortel BCR400V NETTO",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049678",
+    "Artikelomschrijving": "Bossong injectiemortel OSR400VPLUS Emmer",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049687",
+    "Artikelomschrijving": "Bossong Mixtuit tbv V-Plus 2 comp.(st)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000049684",
+    "Artikelomschrijving": "Bossong Pistool TBV v-plus 400ML",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5001000601",
+    "Artikelomschrijving": "Patentbout  M4x38  (100st)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5001000604",
+    "Artikelomschrijving": "Patenthuls   M4x22.5  (100st)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000075911",
+    "Artikelomschrijving": "Nylon Plug Mungo MN 10mm (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000075912",
+    "Artikelomschrijving": "Nylon Plug Mungo MN 12mm (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000075982",
+    "Artikelomschrijving": "Nagelplug MNAr-S 6x60 RVS A2 vk (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000075893",
+    "Artikelomschrijving": "Messing Plug MMD M12 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036441",
+    "Artikelomschrijving": "Sluitring DIN125A Nylon M10 100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000112668",
+    "Artikelomschrijving": "Magneetsnapper 8kg Zamac vernikkeld",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052413",
+    "Artikelomschrijving": "Spanschroef DIN1480 VZ 12mm B-B (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052420",
+    "Artikelomschrijving": "Spanschroef DIN1480 VZ M16x110 H-H (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052497",
+    "Artikelomschrijving": "Spanschroef DIN1480 VZ M16x110 A-A (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000051743",
+    "Artikelomschrijving": "karabijnhaak 60x6 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000051412",
+    "Artikelomschrijving": "Borgveer enkel 4mm 310-04E (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052049",
+    "Artikelomschrijving": "Kabelklem 4,5mm alu/100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000051620",
+    "Artikelomschrijving": "Eindstop 440-60AL 6,0mm alu/100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052176",
+    "Artikelomschrijving": "Oogbouten 580 M10 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052179",
+    "Artikelomschrijving": "Oogbouten 580 M16 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052155",
+    "Artikelomschrijving": "Oogmoeren 582 M10 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052156",
+    "Artikelomschrijving": "Oogmoeren 582 M12 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052158",
+    "Artikelomschrijving": "Oogmoeren 582 M16 (100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000051675",
+    "Artikelomschrijving": "Harpsluiting 6mm 600-06E(100)",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052398",
+    "Artikelomschrijving": "Smalscharnier 50x50mm staal vermessingd",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052610",
+    "Artikelomschrijving": "Rol 6x7 staalkabel 4mm verz (100).",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000052629",
+    "Artikelomschrijving": "Staalkabel 6x7, 3-4mm VZ PVC Trans. 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000211170",
+    "Artikelomschrijving": "Tellerkopschroef PFS 8x80 RVS A2 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000211151",
+    "Artikelomschrijving": "Tellerkopschroef PFS 8x80   T40 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039109",
+    "Artikelomschrijving": "Zeskantbout DIN931 Th.vz. ISO M10x80",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039126",
+    "Artikelomschrijving": "Zeskantbout DIN931 Th.vz. ISO M12x70",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040640",
+    "Artikelomschrijving": "Tapbout DIN933 Th.vz. ISO M10x40  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040644",
+    "Artikelomschrijving": "Tapbout DIN933 Th.vz. ISO M10x60  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040653",
+    "Artikelomschrijving": "Tapbout DIN933 Th.vz. ISO M12x30  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040653",
+    "Artikelomschrijving": "Tapbout DIN933 Th.vz. ISO M12x30  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040683",
+    "Artikelomschrijving": "Tapbout DIN933 Th.vz. ISO M16x40  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039928",
+    "Artikelomschrijving": "Moer DIN934 Th.vz. ISO M10   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039931",
+    "Artikelomschrijving": "Moer DIN934 Th.vz. ISO M16   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029725",
+    "Artikelomschrijving": "Draadeind DIN975 Th. vz. ISO 8.8 M10  st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036475",
+    "Artikelomschrijving": "Sluitring DIN126  Th.vz. M12   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036477",
+    "Artikelomschrijving": "Sluitring DIN126  Th.vz. M16   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029524",
+    "Artikelomschrijving": "Carr.ring  DIN9021   Th.vz. M10    100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036425",
+    "Artikelomschrijving": "Sluitring DIN125A vz. M6 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036427",
+    "Artikelomschrijving": "Sluitring DIN125A vz. M8 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036407",
+    "Artikelomschrijving": "Sluitring DIN125A vz. M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036408",
+    "Artikelomschrijving": "Sluitring DIN125A vz. M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036410",
+    "Artikelomschrijving": "Sluitring DIN125A vz. M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036411",
+    "Artikelomschrijving": "Sluitring DIN125A vz. M18 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038496",
+    "Artikelomschrijving": "Dopmoer DIN1587 vz. M8 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038486",
+    "Artikelomschrijving": "Dopmoer DIN1587 vz. M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038490",
+    "Artikelomschrijving": "Dopmoer DIN1587 vz. M20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038394",
+    "Artikelomschrijving": "Vleugelmoer DIN315 vz. M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029973",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 8x 50   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029979",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 8x 80   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029853",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 60   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029853",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 60 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029857",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 80   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029857",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 80   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029857",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 80 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029857",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 80 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029833",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x 100  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029839",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x160   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029840",
+    "Artikelomschrijving": "Houtdraadbout DIN571 VZ 10x180   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036182",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M8x45   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036182",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M8x45 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036108",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M8x50   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036120",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x25   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035945",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x40   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036125",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x50   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035948",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x55   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035948",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x55   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036128",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x65   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036128",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x65   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036129",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x70   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035925",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x100  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035926",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x110  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035927",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x120  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000035931",
+    "Artikelomschrijving": "Slotbout DIN603 VZ M10x160  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038510",
+    "Artikelomschrijving": "Koppelmoer DIN6334 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038510",
+    "Artikelomschrijving": "Koppelmoer DIN6334 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038511",
+    "Artikelomschrijving": "Koppelmoer DIN6334 VZ M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038511",
+    "Artikelomschrijving": "Koppelmoer DIN6334 VZ M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038513",
+    "Artikelomschrijving": "Koppelmoer DIN6334 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038513",
+    "Artikelomschrijving": "Koppelmoer DIN6334 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038273",
+    "Artikelomschrijving": "Tandveerring DIN6798A VZ M5 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038257",
+    "Artikelomschrijving": "Tandveerring DIN6798A VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038261",
+    "Artikelomschrijving": "Tandveerring DIN6798A VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036522",
+    "Artikelomschrijving": "Sluitring zwaar DIN7349 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033595",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 VZ M5x16   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033606",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 VZ M6x12   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033608",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 VZ M6x16   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000033611",
+    "Artikelomschrijving": "Laagbolkopschr. ISO7380 VZ M6x25 10.9100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029314",
+    "Artikelomschrijving": "Drilltop zesk.kop 6.3x32 3/8\" 100 7504K",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029314",
+    "Artikelomschrijving": "Drilltop zesk.kop 6.3x32 3/8\" 100 7504K",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029129",
+    "Artikelomschrijving": "drilltop Philips 4,2x13 100 7504M",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029143",
+    "Artikelomschrijving": "Drilltop Philips 4,8x19 100 7504M",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029149",
+    "Artikelomschrijving": "Drilltop Philips 4,8x50 100 7504M",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029111",
+    "Artikelomschrijving": "MFX zelftapschr.4.2x32 R2 100 7504N IV",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029113",
+    "Artikelomschrijving": "MFX zelftapschr.4.8x25 R2 100 7504N IV",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000209448",
+    "Artikelomschrijving": "MFX zelftapschr.4.8x38 R2 100 7504N IV",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029178",
+    "Artikelomschrijving": "Drilltop PH platverz. 4,8x19 7504-O 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029178",
+    "Artikelomschrijving": "Drilltop PH platverz. 4,8x19 7504-O 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029187",
+    "Artikelomschrijving": "Drilltop PH platverz. 5,5x32 7504-O 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029197",
+    "Artikelomschrijving": "Drilltop PH platverz. 6,3x70 7504-O 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032822",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M6 x12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032845",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M8 x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032728",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M10x20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032728",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M10x20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032743",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M12x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032766",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M16x35 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000032766",
+    "Artikelomschrijving": "Platkop binn.zesk.DIN7991 VZ M16x35 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029505",
+    "Artikelomschrijving": "Carr.ring  DIN9021 VZ M6 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029492",
+    "Artikelomschrijving": "Carr.ring  DIN9021 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029495",
+    "Artikelomschrijving": "Carr.ring DIN9021 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000031212",
+    "Artikelomschrijving": "Cil.kop binn.zesk.DIN912 VZ  M8 x30  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000031212",
+    "Artikelomschrijving": "Cil.kop binn.zesk.DIN912 VZ  M8 x30  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000031214",
+    "Artikelomschrijving": "Cil.kop binn.zesk.DIN912 VZ  M8 x40  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000030805",
+    "Artikelomschrijving": "Cil.kop binn.zesk.DIN912 VZ  M10x40  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039064",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M8x100 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038649",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M10x60 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038653",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M10x80 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038624",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M10x110 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038624",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M10x110 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038688",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M12x70 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038690",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M12x80 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038692",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M12x90 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038692",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M12x90 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038657",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M12x100 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038754",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M16x60 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038754",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M16x60 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038758",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M16x80 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038718",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M16x100 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038718",
+    "Artikelomschrijving": "Zeskantbout DIN931 VZ M16x100 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040534",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M5x12       100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040559",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M6x12       100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040564",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M6x16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040566",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M6x20 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040568",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M6x25 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040600",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M8x12       100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040606",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M8x16  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040614",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M8x25 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040182",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M10x20     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040185",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M10x25 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040185",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M10x25 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040187",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M10x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040187",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M10x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040195",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M10x70     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040195",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M10x70     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040197",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M10x80     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040167",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M10x100   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040170",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M10x120   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040215",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x20     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040219",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x25     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040222",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x30     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040222",
+    "Artikelomschrijving": "Tapbout DIN933 8.8 VZ M12x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040223",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x35     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040226",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x50     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040229",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x65     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040230",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x70     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040203",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M12x120   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040277",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x30     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040277",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x30     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040281",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x40     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040283",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x50     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040283",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x50     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040283",
+    "Artikelomschrijving": "Tapbout DIN933 VZ 8.8 M16x50 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040283",
+    "Artikelomschrijving": "Tapbout DIN933 VZ 8.8 M16x50 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040285",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x60     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040287",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x70     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040257",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M16x120   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000040383",
+    "Artikelomschrijving": "Tapbout DIN933 VZ M24x70     100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039899",
+    "Artikelomschrijving": "Moer zeskant  DIN934 VZ M5    100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039903",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M6 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039908",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M8 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039851",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039851",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039851",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039854",
+    "Artikelomschrijving": "Moer zeskant  DIN934 VZ M12  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039854",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039854",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039854",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039861",
+    "Artikelomschrijving": "Moer zeskant  DIN934 VZ M16   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039861",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039861",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039861",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039861",
+    "Artikelomschrijving": "Moer zeskant DIN934 8.8 VZ M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039850",
+    "Artikelomschrijving": "Moer zeskant  DIN934 VZ M16 links 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029621",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 4.8 M10",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029621",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 4.8 M10",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029621",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 4.8 M10",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029624",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 4.8 M12",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029631",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 4.8 M16",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029631",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 4.8 M16 - 400mm",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029719",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M6",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029722",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M8",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029687",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M10",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029690",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M12",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029690",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M12",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029690",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M12 - 6x 240mm",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029691",
+    "Artikelomschrijving": "Draadeind DIN975   VZ   8.8  M12x2mtr -",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029694",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M16",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029694",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M16",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029694",
+    "Artikelomschrijving": "Draadeind DIN975 VZ 8.8 M16",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029679",
+    "Artikelomschrijving": "Draadeind DIN975   VZ   8.8  M16 LINKS",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038546",
+    "Artikelomschrijving": "Borgmoer DIN985 VZ     M10          100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038546",
+    "Artikelomschrijving": "Borgmoer DIN985 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038546",
+    "Artikelomschrijving": "Borgmoer DIN985 VZ M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038547",
+    "Artikelomschrijving": "Borgmoer DIN985 VZ     M12          100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000036572",
+    "Artikelomschrijving": "Bolcilinderspaanplaatschroef 5,0x30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000083043",
+    "Artikelomschrijving": "Pijpborgpen VZ 8x50mm  100st",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000071528",
+    "Artikelomschrijving": "Wofix Schroef PK PZD G verz5.0x120/73100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000071533",
+    "Artikelomschrijving": "Wofix Schroef PK PZD G verz. 6.0x50 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000071584",
+    "Artikelomschrijving": "Wofix Schrf PK TX20F Vz..4.0x50/30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000102331",
+    "Artikelomschrijving": "Spaanplaatschroef VZ PZ2 4,0x45/30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000102331",
+    "Artikelomschrijving": "Spaanplaatschroef VZ PZ2 4,0x45/30 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038533",
+    "Artikelomschrijving": "Koppelmoer DIN6334 ZW M8 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038527",
+    "Artikelomschrijving": "Koppelmoer DIN6334 ZW M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038527",
+    "Artikelomschrijving": "Koppelmoer DIN6334 ZW M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038529",
+    "Artikelomschrijving": "Koppelmoer DIN6334 ZW M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038529",
+    "Artikelomschrijving": "Koppelmoer DIN6334 ZW M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000038529",
+    "Artikelomschrijving": "Koppelmoer DIN6334 ZW M16 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000037356",
+    "Artikelomschrijving": "Spie vlak  6x 6x 22mm DIN6885A ZW.100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039843",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M4   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039838",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039838",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039838",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M10 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039839",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039839",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039839",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039839",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M12 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039840",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M14 100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039841",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M16  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039841",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M16  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039841",
+    "Artikelomschrijving": "Lasmoer zeskant DIN929 ZW M16  100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000039952",
+    "Artikelomschrijving": "Moer zeskant  DIN934 ZW M16   100",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029804",
+    "Artikelomschrijving": "Draadeind DIN975   ZW   8.8  M10 - Zagen",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029807",
+    "Artikelomschrijving": "Draadeind DIN975   ZW   8.8  M16 - Zagen",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  },
+  {
+    "Artikelnummer": "5000029807",
+    "Artikelomschrijving": "Draadeind DIN975   ZW   8.8  M16 - 500mm",
+    "Brutoprijs": null,
+    "Kortingpercentage": null,
+    "Nettoprijs": null,
+    "Verkoopprijseenheid": "stuk",
+    "ean-nummer": null
+  }
+]</script>
+
+  <script>
+  const DATA = JSON.parse(document.getElementById('DATA').textContent.trim());
+
+  const $q = document.getElementById('q');
+  const $results = document.getElementById('results');
+  const $empty = document.getElementById('empty');
+  const $count = document.getElementById('count');
+  const $clear = document.getElementById('clear');
+  const $clearTop = document.getElementById('clearTop');
+
+  const $cart = document.getElementById('cart');
+  const $cartEmpty = document.getElementById('cartEmpty');
+  const $cartCount = document.getElementById('cartCount');
+  const $emailMike = document.getElementById('emailMike');
+  const $downloadTxt = document.getElementById('downloadTxt');
+  const $copy = document.getElementById('copy');
+  const $reset = document.getElementById('reset');
+
+  let cart = [];
+
+  function fmt(n) { return (n==null||n==='')?'-':(typeof n==='number'? n.toLocaleString('nl-NL', {minimumFractionDigits:2, maximumFractionDigits:2}) : n); }
+  function fmtKomdex(n) {
+    if (n == null || n === '') return '0';
+    const num = Number(n);
+    if (Number.isNaN(num)) return '0';
+    return num.toLocaleString('nl-NL', {minimumFractionDigits:0, maximumFractionDigits:2});
+  }
+  function safe(str) { return (str||'').toString(); }
+
+  function search(q) {
+    if (!q) return [];
+    q = q.toString().replace(/[^\w\s\-\/]/g, '').trim();
+    if (q.length < 2) return [];
+    const isNum = /^[0-9]+$/.test(q);
+    const needle = q.toLowerCase();
+    const out = [];
+    for (const it of DATA) {
+      const nr = safe(it["Artikelnummer"]);
+      const oms = safe(it["Artikelomschrijving"]);
+      if (!nr && !oms) continue;
+      if (isNum) {
+        if (nr && nr.toString().indexOf(q) !== -1) out.push(it);
+      } else {
+        if (oms.toLowerCase().indexOf(needle) !== -1) out.push(it);
+      }
+    }
+    return out.slice(0, 400);
+  }
+
+  function renderResults(arr) {
+    $results.querySelectorAll('.row.item').forEach(n => n.remove());
+    if (arr.length === 0) {
+      $empty.classList.remove('hidden');
+      $count.textContent = '0 resultaten';
+      $clear.disabled = true;
+      $clearTop.disabled = true;
+      return;
+    }
+    $empty.classList.add('hidden');
+    $count.textContent = arr.length + ' resultaten';
+    $clear.disabled = false;
+    $clearTop.disabled = false;
+
+    const frag = document.createDocumentFragment();
+    for (const it of arr) {
+      const row = document.createElement('div');
+      row.className = 'row item';
+      const art = safe(it["Artikelnummer"]);
+      const oms = safe(it["Artikelomschrijving"]);
+      const netto = it["Nettoprijs"];
+      const korting = it["Kortingpercentage"];
+      const ve = safe(it["Verkoopprijseenheid"]);
+      row.innerHTML = `
+        <div class="code">${art}</div>
+        <div>${oms}</div>
+        <div class="code">€ ${fmt(netto)}</div>
+        <div>${ve||'-'}</div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input class="qty" type="number" min="1" step="1" value="1" />
+          <button class="btn btn-primary">Toevoegen</button>
+        </div>
+      `;
+      const btn = row.querySelector('button');
+      const qty = row.querySelector('input.qty');
+      btn.addEventListener('click', () => addToCart({ art, oms, netto, ve, korting }, parseInt(qty.value||'1',10)));
+      frag.appendChild(row);
+    }
+    $results.appendChild(frag);
+  }
+
+  function findInCart(art) {
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].art === art) return i;
+    }
+    return -1;
+  }
+
+  function addToCart(item, aantal) {
+    if (!aantal || aantal < 1) aantal = 1;
+    const i = findInCart(item.art);
+    if (i >= 0) cart[i].aantal += aantal;
+    else cart.push({ ...item, aantal });
+    renderCart();
+  }
+
+  function removeFromCart(art) {
+    cart = cart.filter(x => x.art !== art);
+    renderCart();
+  }
+
+  function renderCart() {
+    $cart.querySelectorAll('.row.item').forEach(n => n.remove());
+    if (cart.length === 0) {
+      $cartEmpty.classList.remove('hidden');
+      $cartCount.textContent = '0 items';
+      $emailMike.disabled = true;
+      $downloadTxt.disabled = true;
+      $copy.disabled = true;
+      $reset.disabled = true;
+      return;
+    }
+    $cartEmpty.classList.add('hidden');
+    $cartCount.textContent = cart.length + ' items';
+    $emailMike.disabled = false;
+    $downloadTxt.disabled = false;
+    $copy.disabled = false;
+    $reset.disabled = false;
+
+    const frag = document.createDocumentFragment();
+    for (const it of cart) {
+      const row = document.createElement('div');
+      row.className = 'row item';
+      row.innerHTML = `
+        <div class="code">${it.art}</div>
+        <div>${it.oms}</div>
+        <div class="code">${it.aantal}</div>
+        <div class="code">€ ${fmt(it.netto)}</div>
+        <div><button class="btn danger">Verwijder</button></div>
+      `;
+      row.querySelector('button').addEventListener('click', () => removeFromCart(it.art));
+      frag.appendChild(row);
+    }
+    $cart.appendChild(frag);
+  }
+
+  function mapUnit(raw) {
+    const value = (raw || '').toString().trim();
+    if (!value) return 'stk';
+    const lower = value.toLowerCase();
+    if (lower.indexOf('stuk') !== -1) return 'stk';
+    if (lower.indexOf('stuks') !== -1) return 'stk';
+    if (lower.indexOf('paar') !== -1) return 'paar';
+    if (lower.indexOf('meter') !== -1) return 'mtr';
+    if (lower.indexOf('rol') !== -1) return 'rol';
+    if (lower.indexOf('doos') !== -1) return 'doos';
+    if (lower.indexOf('set') !== -1) return 'set';
+    if (lower.indexOf('blister') !== -1) return 'blister';
+    if (lower.indexOf('pak') !== -1) return 'pak';
+    if (lower.indexOf('zak') !== -1) return 'zak';
+    return value;
+  }
+
+  function buildKomdexText() {
+    const lines = cart.map(it => {
+      const cols = [
+        String(it.aantal || '0'),
+        mapUnit(it.ve || 'stk'),
+        '0',
+        '0',
+        String(it.art || ''),
+        String(it.oms || ''),
+        fmtKomdex(it.netto),
+        fmtKomdex(it.korting ?? 0)
+      ];
+      // Gebruik expliciet tabs tussen alle velden
+      return cols.join('\t');
+    });
+    return lines.join('\n');
+  }
+
+  function emailMike() {
+    const txt = buildKomdexText();
+    const subject = encodeURIComponent('Bestelling uit mobiele tool');
+    
+    // Maak eerst het .txt bestand en download het
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    downloadLink.href = url;
+    downloadLink.download = `bestelling_${date}.txt`;
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(url);
+    
+    // Open dan de email (gebruiker kan het gedownloade bestand handmatig bijvoegen)
+    // Behoud tabs in email body - sommige email clients behouden ze
+    const body = encodeURIComponent(txt.replace(/\r?\n/g, '\r\n'));
+    const mailto = `mailto:werkplaats@vandenoetelaar-metaal.nl?subject=${subject}&body=${body}`;
+
+    const emailLink = document.createElement('a');
+    emailLink.href = mailto;
+    emailLink.style.display = 'none';
+    document.body.appendChild(emailLink);
+    setTimeout(() => {
+      emailLink.click();
+      document.body.removeChild(emailLink);
+    }, 100);
+  }
+
+  function downloadTxt() {
+    const txt = buildKomdexText();
+    // Behoud tabs in het .txt bestand
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    link.href = url;
+    link.download = `bestelling_${date}.txt`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  async function copyKomdex() {
+    const txt = buildKomdexText();
+    try {
+      await navigator.clipboard.writeText(txt);
+      $copy.textContent = 'Gekopieerd ✔';
+      setTimeout(() => $copy.textContent = 'Kopieer voor WhatsApp', 1200);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      $copy.textContent = 'Gekopieerd ✔';
+      setTimeout(() => $copy.textContent = 'Kopieer voor WhatsApp', 1200);
+    }
+  }
+
+  function debounce(fn, ms) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); }; }
+  const doSearch = debounce(() => { renderResults(search($q.value||'')); }, 130);
+
+  $q.addEventListener('input', doSearch);
+  $q.addEventListener('keyup', doSearch);
+  $clear.addEventListener('click', () => { $q.value=''; renderResults([]); });
+  $clearTop.addEventListener('click', () => { $q.value=''; renderResults([]); });
+  $emailMike.addEventListener('click', emailMike);
+  $copy.addEventListener('click', copyKomdex);
+  $downloadTxt.addEventListener('click', downloadTxt);
+  $reset.addEventListener('click', () => { cart = []; renderCart(); });
+
+  renderResults([]);
+  renderCart();
+  </script>
+</body>
+</html>
