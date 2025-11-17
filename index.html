@@ -2305,12 +2305,17 @@
     const needle = q.toLowerCase();
     const out = [];
     for (const it of DATA) {
-      const nr = safe(it["Artikelnummer"]);
-      const oms = safe(it["Artikelomschrijving"]);
-      if (!nr && !oms) continue;
+      const nr = safe(it["id"] || it["Artikelnummer"]);
+      const oms = safe(it["naam"] || it["Artikelomschrijving"]);
+      const ean = safe(it["ean"] || it["ean-nummer"] || "");
+      if (!nr && !oms && !ean) continue;
       if (isNum) {
-        if (nr && nr.toString().indexOf(q) !== -1) out.push(it);
+        // Zoek in artikelnummer en EAN code
+        if ((nr && nr.toString().indexOf(q) !== -1) || (ean && ean.toString().indexOf(q) !== -1)) {
+          out.push(it);
+        }
       } else {
+        // Zoek in omschrijving
         if (oms.toLowerCase().indexOf(needle) !== -1) out.push(it);
       }
     }
@@ -2335,11 +2340,11 @@
     for (const it of arr) {
       const row = document.createElement('div');
       row.className = 'row item';
-      const art = safe(it["Artikelnummer"]);
-      const oms = safe(it["Artikelomschrijving"]);
-      const netto = it["Nettoprijs"];
-      const korting = it["Kortingpercentage"];
-      const ve = safe(it["Verkoopprijseenheid"]);
+      const art = safe(it["id"] || it["Artikelnummer"]);
+      const oms = safe(it["naam"] || it["Artikelomschrijving"]);
+      const netto = it["prijs"] || it["Nettoprijs"];
+      const korting = it["korting"] || it["Kortingpercentage"];
+      const ve = safe(it["eenheid"] || it["Verkoopprijseenheid"]);
       row.innerHTML = `
         <div class="code">${art}</div>
         <div>${oms}</div>
